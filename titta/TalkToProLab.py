@@ -683,6 +683,6 @@ class TalkToProLab(threading.Thread):
         self.clock_address.close()
         self.external_presenter_address.close()
         self.project_address.close()
-        
-        
-        
+
+    def endConnectionThread(self):
+        self.__stop = True
