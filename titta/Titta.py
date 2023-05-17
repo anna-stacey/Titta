@@ -65,7 +65,7 @@ class Connect(object):
                 self.__class__ = Tobii.myTobii
                 self.__class__.__init__(self, in_arg)
         else:
-            from titta import Tobii
+            from Titta.titta import Tobii
             self.__class__ = Tobii.myTobii
             self.__class__.__init__(self, in_arg)
 

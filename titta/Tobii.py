@@ -17,8 +17,8 @@ import numpy as np
 import h5py
 import time
 import TittaPy
-import titta
-from titta import helpers_tobii as helpers
+import Titta.titta
+from Titta.titta import helpers_tobii as helpers
 
 # Suppress FutureWarning
 warnings.simplefilter(action='ignore', category=FutureWarning)
