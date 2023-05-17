@@ -41,7 +41,7 @@ def get_defaults(et_name):
     elif et_name == 'Tobii T120':
         settings.SAMPLING_RATE = 120
     elif et_name == 'Tobii Pro Fusion':
-        settings.SAMPLING_RATE = 120
+        settings.SAMPLING_RATE = 60
     else:
         raise Exception('eye tracker type not supported')
 
