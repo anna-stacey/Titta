@@ -674,7 +674,7 @@ class TalkToProLab(threading.Thread):
         assert response['status_code'] == 0, response
         
         # Stop ping ponging to keep the connection alive
-        self.__stop = True
+        #self.__stop = True
         
     #%% 
     def disconnect(self):
