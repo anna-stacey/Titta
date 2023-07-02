@@ -634,7 +634,7 @@ class TalkToProLab(threading.Thread):
         
         assert response['status_code'] == 0, response
     #%%           
-    def send_custom_event(self):
+    def send_custom_event(self, recording_id, event_type):
         ''' External presenter API     
         request:
         {"operation": "SendCustomEvent",
@@ -646,7 +646,19 @@ class TalkToProLab(threading.Thread):
         response:
         {"operation": "SendCustomEvent",
         "status_code": 0}
-        '''          
+        '''
+
+        timestamp = int((self.get_time_stamp())['timestamp'])
+        request =  {"operation": "SendCustomEvent",
+            "recording_id": recording_id,
+            "timestamp": timestamp,
+            "event_type": event_type}
+
+
+        response = self.send_message(self.external_presenter_address,
+                                     request)
+
+        assert response['status_code'] == 0, response
     #%%           
     def finalize_recording(self, recording_id):
         ''' Finalizes the recording and makes it ready for analysis in the 
