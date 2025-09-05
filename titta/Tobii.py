@@ -588,6 +588,35 @@ class myTobii(object):
                                                  self.win_temp.monitor)
         self.et_sample_r.draw()
 
+    def start_drift_check(self):
+        assert self.buffer.has_stream("gaze")
+        self.buffer.start('gaze')
+
+    def stop_drift_check(self):
+        self.buffer.stop('gaze')
+
+    def get_gaze_data(self, mainWindow):
+        assert(self.buffer.is_recording("gaze"))
+        sample = self.buffer.peek_N("gaze")
+        # Wait until we have valid data
+        while (len(sample['left_gaze_point_on_display_area_x']) == 0) or pd.isna(sample['left_gaze_point_on_display_area_x'][0]):
+            sample = self.buffer.peek_N("gaze")
+
+        # print("d:", sample)
+        # print("left gaze point:", sample['left_gaze_point_on_display_area_x'])
+
+        lx = sample['left_gaze_point_on_display_area_x'][0]
+        ly = sample['left_gaze_point_on_display_area_y'][0]
+        rx = sample['right_gaze_point_on_display_area_x'][0]
+        ry = sample['right_gaze_point_on_display_area_y'][0]
+
+        left_pos = helpers.tobii2pix(np.array([[lx, ly]]),
+                                                    mainWindow.monitor)
+        right_pos = helpers.tobii2pix(np.array([[rx, ry]]),
+                                                    mainWindow.monitor)
+
+        return [left_pos, right_pos]
+
    #%%
     def _check_head_position(self):
         ''' Check to make sure that the head is in the center of the track box
