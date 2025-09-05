@@ -579,12 +579,49 @@ class TalkToProLab(threading.Thread):
         response:
         {"operation": "StopRecording",
         "status_code": 0}
-        '''   
-        
+        '''
+        print("Stopping recording...")
+        print("**FIRST ATTEMPT:**")
+        print("State BEFORE trying to stop the recording: " + str(self.get_state()["state"]))
         response = self.send_message(self.external_presenter_address,
                                       {"operation": "StopRecording"})
         
-        assert response['status_code'] == 0, response
+        if response['status_code'] == 0:
+            print("Successfully stopped recording.")
+        else:
+            print("There was a problem stopping the recording.")
+            print("Response:", str(response))
+            print("State AFTER trying to stop the recording: " + str(self.get_state()["state"]))
+            time.sleep(2)
+
+            print("\n**SECOND ATTEMPT:**")
+            print("State BEFORE trying to stop the recording: " + str(self.get_state()["state"]))
+            response = self.send_message(self.external_presenter_address,
+                                      {"operation": "StopRecording"})
+            if response['status_code'] != 0:
+                print("There was a problem stopping the recording.")
+                print("Response:", str(response))
+                print("State AFTER trying to stop the recording: " + str(self.get_state()["state"]))
+                time.sleep(2.5)
+
+                print("\n**THIRD ATTEMPT:**")
+                print("State BEFORE trying to stop the recording: " + str(self.get_state()["state"]))
+                response = self.send_message(self.external_presenter_address,
+                                        {"operation": "StopRecording"})
+                if response['status_code'] == 0:
+                    print("Third try succeeded!")
+                else:
+                    print("There was a problem stopping the recording.")
+                    print("Response:", str(response))
+                    print("State AFTER trying to stop the recording: " + str(self.get_state()["state"]))
+
+        state = self.get_state()["state"]
+        if state != "awaits_finalization":
+            print("TPL did /not/ stop the recording.")
+            print(str(response) + "\nState:" + state)
+        print("State after (trying to) stop recording (however many times): " + str(self.get_state()["state"]))
+
+        assert response['status_code'] == 0 or self.get_state()["state"] == "awaits_finalization"
         
     #%%           
     def send_stimulus_event(self, recording_id, start_timestamp, 
@@ -678,13 +715,17 @@ class TalkToProLab(threading.Thread):
         "status_code": 0}
         
         Note: recording_id is returned from start_recording
-        '''             
-        
+        '''
+
+        print("Finalizing recording...")
+        print("State before (trying to) finalize recording: " + str(self.get_state()))
         response = self.send_message(self.external_presenter_address,
-                                     {"operation": "FinalizeRecording",
-                                      "recording_id": recording_id})  
+                                      {"operation": "FinalizeRecording",
+                                       "recording_id": recording_id})
         assert response['status_code'] == 0, response
-        
+        assert response['status_code'] == 0, str(response) + "\nState: " + str(self.get_state())
+        print("Successfully finalized.")
+
         # Stop ping ponging to keep the connection alive
         #self.__stop = True
         
